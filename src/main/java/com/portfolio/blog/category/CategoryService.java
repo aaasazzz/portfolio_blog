@@ -2,6 +2,8 @@ package com.portfolio.blog.category;
 
 import com.portfolio.blog.category.dto.CategoryRequest;
 import com.portfolio.blog.category.dto.CategoryResponse;
+import com.portfolio.blog.global.error.BusinessException;
+import com.portfolio.blog.global.error.ErrorCode;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponse create(CategoryRequest request){
         if(categoryRepository.existsByName(request.getName())){
-            throw new IllegalArgumentException("이미 존재하는 카테고리 이름입니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_CATEGORY_NAME);
         }
         else{
             Category category = new Category(request.getName());
@@ -40,9 +42,9 @@ public class CategoryService {
     @Transactional
     public CategoryResponse updateName(Integer categoryId, CategoryRequest request){
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
         if(!category.getName().equals(request.getName()) && categoryRepository.existsByName(request.getName())){
-            throw new IllegalArgumentException("이미 존재하는 카테고리 이름입니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_CATEGORY_NAME);
         }
         else{
             category.updateName(request.getName());
