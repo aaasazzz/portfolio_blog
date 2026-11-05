@@ -1,8 +1,12 @@
 package com.portfolio.blog.category;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,5 +24,15 @@ public class CategoryService {
             Category saved = categoryRepository.save(category);
             return CategoryResponse.from(saved);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> findAll(){
+        List<Category> list = categoryRepository.findAll(Sort.by("id"));
+        List<CategoryResponse> x = new ArrayList<>();
+        for (Category category : list) {
+            x.add(CategoryResponse.from(category));
+        }
+        return x;
     }
 }
