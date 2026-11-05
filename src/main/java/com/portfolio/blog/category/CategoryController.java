@@ -26,4 +26,10 @@ public class CategoryController {
     public List<CategoryResponse> findAll(){
         return categoryService.findAll();
     }
+
+    @PutMapping("/{categoryId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CategoryResponse update(@PathVariable Integer categoryId, @Valid @RequestBody CategoryRequest request){
+        return categoryService.updateName(categoryId, request);
+    }
 }

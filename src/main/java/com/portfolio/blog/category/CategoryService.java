@@ -17,12 +17,11 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse create(CategoryRequest request){
-        String s = request.getName();
-        if(categoryRepository.existsByName(s)){
+        if(categoryRepository.existsByName(request.getName())){
             throw new IllegalArgumentException("이미 존재하는 카테고리 이름입니다.");
         }
         else{
-            Category category = new Category(s);
+            Category category = new Category(request.getName());
             Category saved = categoryRepository.save(category);
             return CategoryResponse.from(saved);
         }
@@ -36,5 +35,18 @@ public class CategoryService {
             x.add(CategoryResponse.from(category));
         }
         return x;
+    }
+
+    @Transactional
+    public CategoryResponse updateName(Integer categoryId, CategoryRequest request){
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+        if(!category.getName().equals(request.getName()) && categoryRepository.existsByName(request.getName())){
+            throw new IllegalArgumentException("이미 존재하는 카테고리 이름입니다.");
+        }
+        else{
+            category.updateName(request.getName());
+            return CategoryResponse.from(category);
+        }
     }
 }
