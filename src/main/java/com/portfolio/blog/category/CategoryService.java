@@ -1,5 +1,7 @@
 package com.portfolio.blog.category;
 
+import com.portfolio.blog.category.dto.CategoryRequest;
+import com.portfolio.blog.category.dto.CategoryResponse;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public CategoryResponse create(CategoryCreateRequest request){
+    public CategoryResponse create(CategoryRequest request){
         String s = request.getName();
         if(categoryRepository.existsByName(s)){
             throw new IllegalArgumentException("이미 존재하는 카테고리 이름입니다.");

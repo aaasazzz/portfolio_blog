@@ -1,5 +1,6 @@
-package com.portfolio.blog.category;
+package com.portfolio.blog.category.dto;
 
+import com.portfolio.blog.category.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
