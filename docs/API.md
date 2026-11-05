@@ -123,3 +123,10 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
     ```json
     {"status": 404, "code": "CATEGORY_NOT_FOUND", "message": "카테고리를 찾을 수 없습니다."}
     ```
+
+
+DTO = 데이터를 교환하기 위해 사용하는 데이터 전달용 객체
+controller(표현 계층) = HTTP요청을 service로 넘기고 결과를 응답
+service(비즈니스 계층) = 요청한 작업 처리
+Repository(데이터 접근 계층) = 데이터 관련 접근, 조작 처리
+Entity = 테이블과 클래스 매칭
