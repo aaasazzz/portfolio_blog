@@ -6,7 +6,7 @@
 - POST /api/articles -> 글 생성
 - PUT /api/articles/{articleId} -> 글 수정
 - DELETE /api/articles/{articleId} -> 글 삭제
-ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m -> 1 or 2카테고리, 프로젝트, tmp검색어로 필터링한 글을 m개씩 페이징할 때 n페이지를 조회
+ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m -> 1 or 2카테고리, 프로젝트, tmp검색어로 필터링한 글을 m개씩 페이징할 때 n페이지를 조회
 
 ### category
 - GET /api/categories -> 카테고리 조회
@@ -75,7 +75,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
 ### article
 - GET /api/articles
 
-프론트 → 서버: GET /api/articles?categoryIds=1,3&articleType=project&q=백엔드&page=0&size=10
+프론트 → 서버: GET /api/articles?categoryIds=1,3&articleType=PROJECT&q=백엔드&page=0&size=10
 서버 → 프론트: 200 OK
 ```json
     {
@@ -83,7 +83,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
             {
                 "id": 12,
                 "title": "포트폴리오 블로그 백엔드 구축",
-                "articleType": "project",
+                "articleType": "PROJECT",
                 "isPrivate": false,
                 "categories": [
                     {"id": 1, "name": "Spring"},
@@ -95,7 +95,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
             {
                 "id": 11,
                 "title": "JPA 더티 체킹 정리",
-                "articleType": "general",
+                "articleType": "GENERAL",
                 "isPrivate": false,
                 "categories": [
                     {"id": 1, "name": "Spring"}
@@ -121,7 +121,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
         "id": 12,
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
-        "articleType": "project",
+        "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
             {"id": 1, "name": "Spring"},
@@ -139,7 +139,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
     {
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
-        "articleType": "project",
+        "articleType": "PROJECT",
         "isPrivate": false,
         "categoryIds": [1, 3]
     }
@@ -150,7 +150,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
         "id": 12,
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
-        "articleType": "project",
+        "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
             {"id": 1, "name": "Spring"},
@@ -168,7 +168,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
     {
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
-        "articleType": "project",
+        "articleType": "PROJECT",
         "isPrivate": false,
         "categoryIds": [1, 3]
     }
@@ -179,7 +179,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
         "id": 12,
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
-        "articleType": "project",
+        "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
             {"id": 1, "name": "Spring"},
@@ -206,7 +206,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
 
     400 Bad Request
     ```json
-    {"status": 400, "code": "INVALID_INPUT", "message": "이름은 1자 이상 50자 이하여야 합니다."}
+    {"status": 400, "code": "INVALID_INPUT", "message": "입력값이 올바르지 않습니다."}
     ```
     401 Unauthorized
     ```json
@@ -221,7 +221,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
 
     400 Bad Request
     ```json
-    {"status": 400, "code": "INVALID_INPUT", "message": "이름은 1자 이상 50자 이하여야 합니다."}
+    {"status": 400, "code": "INVALID_INPUT", "message": "입력값이 올바르지 않습니다."}
     ```
     401 Unauthorized
     ```json
@@ -322,7 +322,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=project&q=tmp&page=n&size=m ->
 
 ## 글 규칙
 
-- articleType은 project or general
+- articleType은 PROJECT or GENERAL
 - 제목은 1자 이상 100자 이하
 - GET /api/articles의 쿼리 파라미터는 모두 선택 사항(기본값 page=0, size=10)
 - 목록은 최신 작성순으로 정렬
