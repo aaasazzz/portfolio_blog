@@ -41,6 +41,17 @@ public class ArticleService {
             articleCategoryRepository.save(new ArticleCategory(saved, category));
         }
         return ArticleResponse.from(saved, categoryList);
+    }
 
+    @Transactional(readOnly = true)
+    public ArticleResponse find(Integer articleId){
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
+        List<ArticleCategory> articleCategoryList = articleCategoryRepository.findByArticle(article);
+        List<Category> categoryList = new ArrayList<>();
+        for(ArticleCategory articleCategory : articleCategoryList){
+            categoryList.add(articleCategory.getCategory());
+        }
+        return ArticleResponse.from(article, categoryList);
     }
 }

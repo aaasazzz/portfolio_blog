@@ -19,4 +19,10 @@ public class ArticleController {
         return articleService.create(request);
     }
 
+    @GetMapping("/{articleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ArticleResponse find(@PathVariable Integer articleId){
+        return articleService.find(articleId);
+    }
+
 }
