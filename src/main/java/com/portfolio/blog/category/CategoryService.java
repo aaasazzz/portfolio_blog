@@ -33,7 +33,7 @@ public class CategoryService {
     public List<CategoryResponse> findAll(){
         List<Category> list = categoryRepository.findAll(Sort.by("id"));
         List<CategoryResponse> x = new ArrayList<>();
-        for (Category category : list) {
+        for(Category category : list){
             x.add(CategoryResponse.from(category));
         }
         return x;
