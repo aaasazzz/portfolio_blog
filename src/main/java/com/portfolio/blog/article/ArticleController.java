@@ -25,4 +25,10 @@ public class ArticleController {
         return articleService.find(articleId);
     }
 
+    @PutMapping("/{articleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ArticleResponse update(@PathVariable Integer articleId, @Valid @RequestBody ArticleRequest request){
+        return articleService.update(articleId, request);
+    }
+
 }

@@ -54,4 +54,27 @@ public class ArticleService {
         }
         return ArticleResponse.from(article, categoryList);
     }
+
+    @Transactional
+    public ArticleResponse update(Integer articleId, ArticleRequest request){
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
+        List<Integer> categoryIds = request.getCategoryIds().stream().distinct().toList();
+        List<Category> categoryList = new ArrayList<>();
+        for(Integer categoryId : categoryIds) {
+            categoryList.add(categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND))
+            );
+        }
+        article.update(request.getTitle(), request.getContent(), request.getIsPrivate(), request.getArticleType());
+
+        articleCategoryRepository.deleteAll(articleCategoryRepository.findByArticle(article));
+        articleCategoryRepository.flush();
+
+        for(Category category : categoryList){
+            articleCategoryRepository.save(new ArticleCategory(article, category));
+        }
+
+        return ArticleResponse.from(article, categoryList);
+    }
 }
