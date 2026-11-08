@@ -9,8 +9,13 @@ import org.springframework.data.repository.query.Param;
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     @Query("""
-        select a from Article a
-        where (:articleType is null or a.articleType = :articleType)
-        """)
-    Page<Article> search(@Param("articleType") ArticleType articleType, Pageable pageable);
+    select a from Article a
+    where (:articleType is null or a.articleType = :articleType)
+      and (:q is null
+           or lower(a.title) like lower(concat('%', :q, '%'))
+           or lower(a.content) like lower(concat('%', :q, '%')))
+    """)
+    Page<Article> search(@Param("articleType") ArticleType articleType,
+                         @Param("q") String q,
+                         Pageable pageable);
 }

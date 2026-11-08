@@ -95,10 +95,10 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleListResponse findAll(ArticleType articleType, int page, int size){
+    public ArticleListResponse findAll(ArticleType articleType, String q, int page, int size){
         if(page < 0 || size < 1 || size > 50) throw new BusinessException(ErrorCode.INVALID_INPUT);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createTime"));
-        Page<Article> result = articleRepository.search(articleType, pageable);
+        Page<Article> result = articleRepository.search(articleType, q, pageable);
 
         List<ArticleSummaryResponse> articles = new ArrayList<>();
         for (Article article : result.getContent()) {
