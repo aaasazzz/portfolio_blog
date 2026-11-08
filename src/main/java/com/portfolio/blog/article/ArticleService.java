@@ -77,4 +77,14 @@ public class ArticleService {
 
         return ArticleResponse.from(article, categoryList);
     }
+
+    @Transactional
+    public void delete(Integer articleId){
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
+
+        articleCategoryRepository.deleteAll(articleCategoryRepository.findByArticle(article));
+        articleRepository.delete(article);
+        return;
+    }
 }

@@ -31,4 +31,11 @@ public class ArticleController {
         return articleService.update(articleId, request);
     }
 
+    @DeleteMapping("{articleId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer articleId){
+        articleService.delete(articleId);
+        return;
+    }
+
 }
