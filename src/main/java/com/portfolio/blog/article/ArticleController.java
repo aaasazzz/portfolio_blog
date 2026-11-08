@@ -41,7 +41,8 @@ public class ArticleController {
 
     @GetMapping
     public ArticleListResponse findAll(@RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "10") int size) {
-        return articleService.findAll(page, size);
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(required = false) ArticleType articleType) {
+        return articleService.findAll(articleType, page, size);
     }
 }
