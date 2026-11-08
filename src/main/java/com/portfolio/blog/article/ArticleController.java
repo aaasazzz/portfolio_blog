@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/articles")
 @RequiredArgsConstructor
@@ -43,7 +45,8 @@ public class ArticleController {
     public ArticleListResponse findAll(@RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size,
                                        @RequestParam(required = false) ArticleType articleType,
-                                       @RequestParam(required = false) String q) {
-        return articleService.findAll(articleType, q, page, size);
+                                       @RequestParam(required = false) String q,
+                                       @RequestParam(required = false) List<Integer> categoryIds) {
+        return articleService.findAll(articleType, q, categoryIds, page, size);
     }
 }

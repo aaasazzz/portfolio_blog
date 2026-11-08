@@ -95,10 +95,14 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleListResponse findAll(ArticleType articleType, String q, int page, int size){
+    public ArticleListResponse findAll(ArticleType articleType, String q, List<Integer> categoryIds,
+                                       int page, int size){
         if(page < 0 || size < 1 || size > 50) throw new BusinessException(ErrorCode.INVALID_INPUT);
+        boolean allCategories = categoryIds == null || categoryIds.isEmpty();
+        if (allCategories) categoryIds = List.of(); //필터 적용 안했으면 전체 보이게
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createTime"));
-        Page<Article> result = articleRepository.search(articleType, q, pageable);
+        Page<Article> result = articleRepository.search(articleType, q, allCategories, categoryIds, pageable);
 
         List<ArticleSummaryResponse> articles = new ArrayList<>();
         for (Article article : result.getContent()) {
