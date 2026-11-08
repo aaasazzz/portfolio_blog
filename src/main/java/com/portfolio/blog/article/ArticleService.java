@@ -2,13 +2,19 @@ package com.portfolio.blog.article;
 
 import com.portfolio.blog.admin.Admin;
 import com.portfolio.blog.admin.AdminRepository;
+import com.portfolio.blog.article.dto.ArticleListResponse;
 import com.portfolio.blog.article.dto.ArticleRequest;
 import com.portfolio.blog.article.dto.ArticleResponse;
+import com.portfolio.blog.article.dto.ArticleSummaryResponse;
 import com.portfolio.blog.category.Category;
 import com.portfolio.blog.category.CategoryRepository;
 import com.portfolio.blog.global.error.BusinessException;
 import com.portfolio.blog.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,5 +92,23 @@ public class ArticleService {
         articleCategoryRepository.deleteAll(articleCategoryRepository.findByArticle(article));
         articleRepository.delete(article);
         return;
+    }
+
+    @Transactional(readOnly = true)
+    public ArticleListResponse findAll(int page, int size){
+        if(page < 0 || size < 1 || size > 50) throw new BusinessException(ErrorCode.INVALID_INPUT);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createTime"));
+        Page<Article> result = articleRepository.findAll(pageable);
+
+        List<ArticleSummaryResponse> articles = new ArrayList<>();
+        for (Article article : result.getContent()) {
+            List<Category> categoryList = new ArrayList<>();
+            for (ArticleCategory articleCategory : articleCategoryRepository.findByArticle(article)) {
+                categoryList.add(articleCategory.getCategory());
+            }
+            articles.add(ArticleSummaryResponse.from(article, categoryList));
+        }
+
+        return ArticleListResponse.from(result, articles);
     }
 }
