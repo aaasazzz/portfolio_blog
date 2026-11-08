@@ -1,11 +1,14 @@
 package com.portfolio.blog.article;
 
+import com.portfolio.blog.article.dto.ArticleListResponse;
 import com.portfolio.blog.article.dto.ArticleRequest;
 import com.portfolio.blog.article.dto.ArticleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/articles")
@@ -31,11 +34,19 @@ public class ArticleController {
         return articleService.update(articleId, request);
     }
 
-    @DeleteMapping("{articleId}")
+    @DeleteMapping("/{articleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer articleId){
         articleService.delete(articleId);
         return;
     }
 
+    @GetMapping
+    public ArticleListResponse findAll(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(required = false) ArticleType articleType,
+                                       @RequestParam(required = false) String q,
+                                       @RequestParam(required = false) List<Integer> categoryIds) {
+        return articleService.findAll(articleType, q, categoryIds, page, size);
+    }
 }
