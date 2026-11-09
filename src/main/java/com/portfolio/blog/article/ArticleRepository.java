@@ -1,5 +1,6 @@
 package com.portfolio.blog.article;
 
+import com.portfolio.blog.category.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,13 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                          @Param("allCategories") boolean allCategories,
                          @Param("categoryIds") List<Integer> categoryIds,
                          @Param("includePrivate") boolean includePrivate,Pageable pageable); //카테고리 안 쓸 때 is null로 하면 빈 리스트로 와서 별도의 flag 추가
+
+    @Query("""
+    select a from Article a
+    where exists (select 1 from ArticleCategory ac
+                  where ac.article = a and ac.category = :category)
+      and not exists (select 1 from ArticleCategory ac
+                      where ac.article = a and ac.category <> :category)
+""")
+    List<Article> findOnlyInCategory(@Param("category") Category category);
 }

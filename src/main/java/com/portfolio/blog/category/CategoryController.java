@@ -1,5 +1,6 @@
 package com.portfolio.blog.category;
 
+import com.portfolio.blog.category.dto.CategoryDeletionPreviewResponse;
 import com.portfolio.blog.category.dto.CategoryRequest;
 import com.portfolio.blog.category.dto.CategoryResponse;
 import jakarta.validation.Valid;
@@ -31,5 +32,16 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.OK)
     public CategoryResponse update(@PathVariable Integer categoryId, @Valid @RequestBody CategoryRequest request){
         return categoryService.updateName(categoryId, request);
+    }
+
+    @GetMapping("/{categoryId}/deletion-preview")
+    public CategoryDeletionPreviewResponse previewDeletion(@PathVariable Integer categoryId){
+        return categoryService.previewDeletion(categoryId);
+    }
+
+    @DeleteMapping("/{categoryId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer categoryId){
+        categoryService.delete(categoryId);
     }
 }
