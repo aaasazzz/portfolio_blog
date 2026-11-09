@@ -19,10 +19,11 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
       and (:allCategories = true
            or exists (select 1 from ArticleCategory ac
                       where ac.article = a and ac.category.id in :categoryIds))
+      and (:includePrivate = true or a.isPrivate = false)
     """)
     Page<Article> search(@Param("articleType") ArticleType articleType,
                          @Param("q") String q,
                          @Param("allCategories") boolean allCategories,
                          @Param("categoryIds") List<Integer> categoryIds,
-                         Pageable pageable); //카테고리 안 쓸 때 is null로 하면 빈 리스트로 와서 별도의 flag 추가
+                         @Param("includePrivate") boolean includePrivate,Pageable pageable); //카테고리 안 쓸 때 is null로 하면 빈 리스트로 와서 별도의 flag 추가
 }

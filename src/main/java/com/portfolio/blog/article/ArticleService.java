@@ -30,8 +30,8 @@ public class ArticleService {
     private final ArticleCategoryRepository articleCategoryRepository;
 
     @Transactional
-    public ArticleResponse create(ArticleRequest request){
-        Admin writer = adminRepository.findByLoginId("admin")
+    public ArticleResponse create(ArticleRequest request, String loginId){
+        Admin writer = adminRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
         List<Integer> categoryIds = request.getCategoryIds().stream().distinct().toList();
         List<Category> categoryList = new ArrayList<>();
@@ -50,9 +50,10 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleResponse find(Integer articleId){
+    public ArticleResponse find(Integer articleId, boolean loggedIn){
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ARTICLE_NOT_FOUND));
+        if(article.isPrivate() && !loggedIn) throw new BusinessException(ErrorCode.ARTICLE_NOT_FOUND);
         List<ArticleCategory> articleCategoryList = articleCategoryRepository.findByArticle(article);
         List<Category> categoryList = new ArrayList<>();
         for(ArticleCategory articleCategory : articleCategoryList){
@@ -96,13 +97,13 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public ArticleListResponse findAll(ArticleType articleType, String q, List<Integer> categoryIds,
-                                       int page, int size){
+                                       int page, int size, boolean loggedIn){
         if(page < 0 || size < 1 || size > 50) throw new BusinessException(ErrorCode.INVALID_INPUT);
         boolean allCategories = categoryIds == null || categoryIds.isEmpty();
         if (allCategories) categoryIds = List.of(); //필터 적용 안했으면 전체 보이게
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createTime"));
-        Page<Article> result = articleRepository.search(articleType, q, allCategories, categoryIds, pageable);
+        Page<Article> result = articleRepository.search(articleType, q, allCategories, categoryIds, loggedIn, pageable);
 
         List<ArticleSummaryResponse> articles = new ArrayList<>();
         for (Article article : result.getContent()) {
