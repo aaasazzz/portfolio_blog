@@ -16,6 +16,7 @@ import java.util.List;
 public class ArticleSummaryResponse {
     private Integer id;
     private String title;
+    private String summary;
     private ArticleType articleType;
     private Boolean isPrivate;
     private List<CategoryResponse> categories;
@@ -27,7 +28,7 @@ public class ArticleSummaryResponse {
         for(Category category : categories){
             cr.add(CategoryResponse.from(category));
         }
-        return new ArticleSummaryResponse(article.getId(), article.getTitle(), article.getArticleType(),
+        return new ArticleSummaryResponse(article.getId(), article.getTitle(), article.getSummary(), article.getArticleType(),
                 article.isPrivate(), cr, article.getCreateTime(), article.getModifyTime());
     }
 }

@@ -20,6 +20,10 @@ public class ArticleRequest {
     @NotBlank
     private String content;
 
+    @NotBlank
+    @Size(max = 200)
+    private String summary;
+
     @NotNull
     private ArticleType articleType;
 

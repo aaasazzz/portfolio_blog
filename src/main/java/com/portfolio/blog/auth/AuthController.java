@@ -35,4 +35,12 @@ public class AuthController {
         }
         session.invalidate();
     }
+
+    @GetMapping("/me")
+    public LoginResponse me(@SessionAttribute(name = "loginId", required = false) String loginId){
+        if(loginId == null){
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+        return new LoginResponse(loginId);
+    }
 }
