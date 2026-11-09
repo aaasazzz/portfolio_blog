@@ -29,6 +29,9 @@ public class Article {
     @Column(name = "content", nullable = false, columnDefinition = "MEDIUMTEXT")
     private String content;
 
+    @Column(name = "summary", nullable = false, length = 200)
+    private String summary;
+
     @Column(name = "is_private", nullable = false)
     private boolean isPrivate;
 
@@ -44,17 +47,19 @@ public class Article {
     @Column(name = "modify_time", nullable = false)
     private LocalDateTime modifyTime;
 
-    public Article(Admin writer, String title, String content, boolean isPrivate, ArticleType articleType){
+    public Article(Admin writer, String title, String content, String summary, boolean isPrivate, ArticleType articleType){
         this.writer = writer;
         this.title = title;
         this.content = content;
+        this.summary = summary;
         this.isPrivate = isPrivate;
         this.articleType = articleType;
     }
 
-    public void update(String title, String content, boolean isPrivate, ArticleType articleType){
+    public void update(String title, String content, String summary, boolean isPrivate, ArticleType articleType){
         this.title = title;
         this.content = content;
+        this.summary = summary;
         this.isPrivate = isPrivate;
         this.articleType = articleType;
     }

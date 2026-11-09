@@ -16,8 +16,9 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 - GET /api/categories/{categoryId}/deletion-preview -> 삭제 시 함께 지워질 글 수 조회
 
 ### login
-- POST /api/auth/login   -> 로그인
-- POST /api/auth/logout  -> 로그아웃
+- POST /api/auth/login -> 로그인
+- POST /api/auth/logout -> 로그아웃
+- GET /api/auth/me -> 현재 로그인 정보 조회
 
 비공개글은 같은 URL에 로그인 여부로 분류
 
@@ -83,6 +84,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
             {
                 "id": 12,
                 "title": "포트폴리오 블로그 백엔드 구축",
+                "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
                 "articleType": "PROJECT",
                 "isPrivate": false,
                 "categories": [
@@ -95,6 +97,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
             {
                 "id": 11,
                 "title": "JPA 더티 체킹 정리",
+                "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
                 "articleType": "GENERAL",
                 "isPrivate": false,
                 "categories": [
@@ -121,6 +124,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
         "id": 12,
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
+        "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
@@ -139,6 +143,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
     {
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
+        "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categoryIds": [1, 3]
@@ -150,6 +155,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
         "id": 12,
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
+        "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
@@ -168,6 +174,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
     {
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
+        "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categoryIds": [1, 3]
@@ -179,6 +186,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
         "id": 12,
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
+        "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
@@ -204,6 +212,15 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
     {"loginId": "admin", "password": "admin1234"}
 ```
 서버 → 프론트: 200 OK (세션 쿠키는 Set-Cookie 헤더로 전달)
+```json
+    {"loginId": "admin"}
+```
+
+- GET /api/auth/me
+
+프론트 → 서버: GET /api/auth/me
+
+서버 → 프론트: 200 OK
 ```json
     {"loginId": "admin"}
 ```
@@ -354,6 +371,13 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
     {"status": 401, "code": "UNAUTHORIZED", "message": "로그인이 필요합니다."}
     ```
 
+- GET /api/auth/me
+
+    401 Unauthorized
+    ```json
+    {"status": 401, "code": "UNAUTHORIZED", "message": "로그인이 필요합니다."}
+    ```
+
 ---
 
 ## 글 규칙
@@ -367,12 +391,13 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 - 비로그인 사용자가 비공개 글을 상세 조회하면 404 ARTICLE_NOT_FOUND
 - categoryIds는 1개 이상
 - 비공개글 조회는 로그인한 관리자만
+- summary는 1자 이상 200자 이하
 
 ## 로그인 규칙
 
 | 구분 | API |
 |---|---|
-| 로그인 불필요 | GET /api/articles, GET /api/articles/{articleId}, GET /api/categories, POST /api/auth/login |
+| 로그인 불필요 | GET /api/articles, GET /api/articles/{articleId}, GET /api/categories, GET /api/auth/me, POST /api/auth/login |
 | 로그인 필요 | 글 POST/PUT/DELETE, 카테고리 POST/PUT/DELETE, GET /api/categories/{categoryId}/deletion-preview, POST /api/auth/logout |
 
 - 로그인 방식은 세션 + 쿠키(JSESSIONID)
@@ -389,8 +414,8 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 
 ---
 
-DTO = 데이터를 교환하기 위해 사용하는 데이터 전달용 객체
-controller(표현 계층) = HTTP요청을 service로 넘기고 결과를 응답
-service(비즈니스 계층) = 요청한 작업 처리
-Repository(데이터 접근 계층) = 데이터 관련 접근, 조작 처리
+DTO = 데이터를 교환하기 위해 사용하는 데이터 전달용 객체  
+controller(표현 계층) = HTTP요청을 service로 넘기고 결과를 응답  
+service(비즈니스 계층) = 요청한 작업 처리  
+Repository(데이터 접근 계층) = 데이터 관련 접근, 조작 처리  
 Entity = 테이블과 클래스 매칭
