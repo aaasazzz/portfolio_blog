@@ -18,14 +18,16 @@ public class ArticleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ArticleResponse create(@Valid @RequestBody ArticleRequest request){
-        return articleService.create(request);
+    public ArticleResponse create(@Valid @RequestBody ArticleRequest request,
+                                  @SessionAttribute("loginId") String loginId){
+        return articleService.create(request, loginId);
     }
 
     @GetMapping("/{articleId}")
     @ResponseStatus(HttpStatus.OK)
-    public ArticleResponse find(@PathVariable Integer articleId){
-        return articleService.find(articleId);
+    public ArticleResponse find(@PathVariable Integer articleId,
+                                @SessionAttribute(name = "loginId", required = false) String loginId){
+        return articleService.find(articleId, loginId != null);
     }
 
     @PutMapping("/{articleId}")
@@ -46,7 +48,8 @@ public class ArticleController {
                                        @RequestParam(defaultValue = "10") int size,
                                        @RequestParam(required = false) ArticleType articleType,
                                        @RequestParam(required = false) String q,
-                                       @RequestParam(required = false) List<Integer> categoryIds) {
-        return articleService.findAll(articleType, q, categoryIds, page, size);
+                                       @RequestParam(required = false) List<Integer> categoryIds,
+                                       @SessionAttribute(name = "loginId", required = false) String loginId) {
+        return articleService.findAll(articleType, q, categoryIds, page, size, loginId != null);
     }
 }

@@ -196,6 +196,23 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 
 서버 → 프론트: 204 No Content 
 
+### login
+- POST /api/auth/login
+
+프론트 → 서버: POST /api/auth/login
+```json
+    {"loginId": "admin", "password": "admin1234"}
+```
+서버 → 프론트: 200 OK (세션 쿠키는 Set-Cookie 헤더로 전달)
+```json
+    {"loginId": "admin"}
+```
+
+- POST /api/auth/logout
+
+프론트 → 서버: POST /api/auth/logout
+
+서버 → 프론트: 204 No Content
 
 ---
 
@@ -318,6 +335,25 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
     {"status": 404, "code": "ARTICLE_NOT_FOUND", "message": "글을 찾을 수 없습니다."}
     ```
 
+### login
+- POST /api/auth/login
+
+    400 Bad Request
+    ```json
+    {"status": 400, "code": "INVALID_INPUT", "message": "입력값이 올바르지 않습니다."}
+    ```
+    401 Unauthorized (아이디가 없거나 비밀번호가 틀린 경우)
+    ```json
+    {"status": 401, "code": "LOGIN_FAILED", "message": "아이디 또는 비밀번호가 올바르지 않습니다."}
+    ```
+
+- POST /api/auth/logout
+
+    401 Unauthorized
+    ```json
+    {"status": 401, "code": "UNAUTHORIZED", "message": "로그인이 필요합니다."}
+    ```
+
 ---
 
 ## 글 규칙
@@ -330,6 +366,21 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 - 비로그인 사용자의 목록에는 비공개 글 포함 X
 - 비로그인 사용자가 비공개 글을 상세 조회하면 404 ARTICLE_NOT_FOUND
 - categoryIds는 1개 이상
+- 비공개글 조회는 로그인한 관리자만
+
+## 로그인 규칙
+
+| 구분 | API |
+|---|---|
+| 로그인 불필요 | GET /api/articles, GET /api/articles/{articleId}, GET /api/categories, POST /api/auth/login |
+| 로그인 필요 | 글 POST/PUT/DELETE, 카테고리 POST/PUT/DELETE, GET /api/categories/{categoryId}/deletion-preview, POST /api/auth/logout |
+
+- 로그인 방식은 세션 + 쿠키(JSESSIONID)
+- 비밀번호는 BCrypt 해시로 저장
+- 아이디가 없는 경우와 비밀번호가 틀린 경우의 응답은 동일하게 처리 (아이디 또는 비밀번호가 올바르지 않습니다.)
+- 로그인 성공 시 세션 ID를 새로 발급
+- 로그아웃하면 세션 삭제
+- 세션은 마지막 요청 후 30분간 요청이 없으면 만료
 
 DTO = 데이터를 교환하기 위해 사용하는 데이터 전달용 객체
 controller(표현 계층) = HTTP요청을 service로 넘기고 결과를 응답
