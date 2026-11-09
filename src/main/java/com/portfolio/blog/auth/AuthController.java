@@ -2,14 +2,14 @@ package com.portfolio.blog.auth;
 
 import com.portfolio.blog.auth.dto.LoginRequest;
 import com.portfolio.blog.auth.dto.LoginResponse;
+import com.portfolio.blog.global.error.BusinessException;
+import com.portfolio.blog.global.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,6 +24,15 @@ public class AuthController {
         httpRequest.changeSessionId();
         session.setAttribute("loginId", loginResponse.getLoginId());
         return loginResponse;
+    }
 
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(HttpServletRequest httpRequest){
+        HttpSession session = httpRequest.getSession(false);
+        if(session == null){
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+        session.invalidate();
     }
 }
