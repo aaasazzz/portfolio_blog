@@ -26,7 +26,7 @@ public class Article {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, columnDefinition = "MEDIUMTEXT")
     private String content;
 
     @Column(name = "is_private", nullable = false)
