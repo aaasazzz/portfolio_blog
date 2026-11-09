@@ -382,6 +382,13 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 - 로그아웃하면 세션 삭제
 - 세션은 마지막 요청 후 30분간 요청이 없으면 만료
 
+## 카테고리 규칙
+
+- 카테고리를 삭제하면 다른 카테고리가 없는 글도 함께 삭제
+- 다른 카테고리가 있는 글은 유지하고 해당 카테고리 연결만 삭제
+
+---
+
 DTO = 데이터를 교환하기 위해 사용하는 데이터 전달용 객체
 controller(표현 계층) = HTTP요청을 service로 넘기고 결과를 응답
 service(비즈니스 계층) = 요청한 작업 처리

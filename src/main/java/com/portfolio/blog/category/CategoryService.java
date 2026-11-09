@@ -1,5 +1,10 @@
 package com.portfolio.blog.category;
 
+import com.portfolio.blog.article.Article;
+import com.portfolio.blog.article.ArticleCategory;
+import com.portfolio.blog.article.ArticleCategoryRepository;
+import com.portfolio.blog.article.ArticleRepository;
+import com.portfolio.blog.category.dto.CategoryDeletionPreviewResponse;
 import com.portfolio.blog.category.dto.CategoryRequest;
 import com.portfolio.blog.category.dto.CategoryResponse;
 import com.portfolio.blog.global.error.BusinessException;
@@ -16,6 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final ArticleRepository articleRepository;
+    private final ArticleCategoryRepository articleCategoryRepository;
 
     @Transactional
     public CategoryResponse create(CategoryRequest request){
@@ -50,5 +57,24 @@ public class CategoryService {
             category.updateName(request.getName());
             return CategoryResponse.from(category);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public CategoryDeletionPreviewResponse previewDeletion(Integer categoryId){
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
+        return new CategoryDeletionPreviewResponse(articleRepository.findOnlyInCategory(category).size());
+    }
+
+    @Transactional
+    public void delete(Integer categoryId){
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
+        List<Article> deletelist = articleRepository.findOnlyInCategory(category);
+        List<ArticleCategory> deletelink = articleCategoryRepository.findByCategory(category);
+
+        articleCategoryRepository.deleteAll(deletelink);
+        articleRepository.deleteAll(deletelist);
+        categoryRepository.delete(category);
     }
 }
