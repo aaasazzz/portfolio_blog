@@ -104,14 +104,19 @@ export default function BlogPage() {
             {articles.data.articles.map((article) => (
               <li key={article.id}>
                 <Link to={`/articles/${article.id}`}>
-                  <div className="post-heading">
-                    <h2>{article.title}</h2>
-                    <time dateTime={article.createTime}>{formatDate(article.createTime)}</time>
+                  <div className="post-body">
+                    <div className="post-heading">
+                      <h2>{article.title}</h2>
+                      <time dateTime={article.createTime}>{formatDate(article.createTime)}</time>
+                    </div>
+                    <p>{article.summary}</p>
+                    <span className="project-categories">
+                      {article.categories.map((category) => category.name).join(' · ')}
+                    </span>
                   </div>
-                  <p>{article.summary}</p>
-                  <span className="project-categories">
-                    {article.categories.map((category) => category.name).join(' · ')}
-                  </span>
+                  {article.thumbnailUrl && (
+                    <img className="post-thumbnail" src={article.thumbnailUrl} alt="" loading="lazy" />
+                  )}
                 </Link>
               </li>
             ))}
