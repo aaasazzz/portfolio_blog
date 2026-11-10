@@ -41,7 +41,7 @@ public class ArticleService {
             );
         }
         Article article = new Article(writer, request.getTitle(), request.getContent(), request.getSummary(),
-                request.getIsPrivate(), request.getArticleType());
+                request.getThumbnailUrl(), request.getIsPrivate(), request.getArticleType());
         Article saved = articleRepository.save(article);
         for(Category category : categoryList){
             articleCategoryRepository.save(new ArticleCategory(saved, category));
@@ -73,7 +73,8 @@ public class ArticleService {
                     .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND))
             );
         }
-        article.update(request.getTitle(), request.getContent(), request.getSummary(), request.getIsPrivate(), request.getArticleType());
+        article.update(request.getTitle(), request.getContent(), request.getSummary(),
+                request.getThumbnailUrl(), request.getIsPrivate(), request.getArticleType());
 
         articleCategoryRepository.deleteAll(articleCategoryRepository.findByArticle(article));
         articleCategoryRepository.flush();

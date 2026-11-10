@@ -1,10 +1,7 @@
 package com.portfolio.blog.article.dto;
 
 import com.portfolio.blog.article.ArticleType;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +29,7 @@ public class ArticleRequest {
 
     @NotEmpty
     private List<Integer> categoryIds;
+
+    @Pattern(regexp = "^/api/images/[0-9a-f-]{36}\\.[a-z]+$")
+    private String thumbnailUrl;
 }

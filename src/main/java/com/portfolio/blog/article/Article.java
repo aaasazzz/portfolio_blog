@@ -32,6 +32,9 @@ public class Article {
     @Column(name = "summary", nullable = false, length = 200)
     private String summary;
 
+    @Column(name = "thumbnail_url", nullable = true, length = 100)
+    private String thumbnailUrl;
+
     @Column(name = "is_private", nullable = false)
     private boolean isPrivate;
 
@@ -47,20 +50,22 @@ public class Article {
     @Column(name = "modify_time", nullable = false)
     private LocalDateTime modifyTime;
 
-    public Article(Admin writer, String title, String content, String summary, boolean isPrivate, ArticleType articleType){
+    public Article(Admin writer, String title, String content, String summary, String thumbnailUrl, boolean isPrivate, ArticleType articleType){
         this.writer = writer;
         this.title = title;
         this.content = content;
         this.summary = summary;
         this.isPrivate = isPrivate;
         this.articleType = articleType;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
-    public void update(String title, String content, String summary, boolean isPrivate, ArticleType articleType){
+    public void update(String title, String content, String summary, String thumbnailUrl, boolean isPrivate, ArticleType articleType){
         this.title = title;
         this.content = content;
         this.summary = summary;
         this.isPrivate = isPrivate;
         this.articleType = articleType;
+        this.thumbnailUrl = thumbnailUrl;
     }
 }
