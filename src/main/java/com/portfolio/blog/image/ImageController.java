@@ -27,6 +27,7 @@ public class ImageController {
         Resource image = imageService.load(fileName);
         MediaType type = MediaTypeFactory.getMediaType(fileName)
                 .orElse(MediaType.APPLICATION_OCTET_STREAM);
-        return ResponseEntity.ok().contentType(type).body(image);
+        return ResponseEntity.ok().contentType(type)
+                .header("X-Content-Type-Options", "nosniff").body(image);
     }
 }
