@@ -36,4 +36,6 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                       where ac.article = a and ac.category <> :category)
 """)
     List<Article> findOnlyInCategory(@Param("category") Category category);
+
+    boolean existsByContentContainingOrThumbnailUrlContaining(String content, String thumbnailUrl);
 }
