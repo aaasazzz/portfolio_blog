@@ -21,8 +21,11 @@ async function request<T>(path: string, method = 'GET', body?: unknown): Promise
   try {
     response = await fetch(`/api${path}`, {
       method,
-      headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      headers:
+        body === undefined || body instanceof FormData
+          ? undefined
+          : { 'Content-Type': 'application/json' },
+      body: body === undefined || body instanceof FormData ? body : JSON.stringify(body),
     });
   } catch {
     throw new ApiError(0, 'NETWORK_ERROR', '서버에 연결할 수 없어요.');
@@ -48,10 +51,16 @@ async function request<T>(path: string, method = 'GET', body?: unknown): Promise
     throw new ApiError(
       response.status,
       error.code ?? 'UNKNOWN_ERROR',
-      error.message ?? (response.status >= 502 ? '서버에 연결할 수 없어요.' : '요청을 처리하지 못했어요.'),
+      error.message ?? fallbackMessage(response.status),
     );
   }
   return data as T;
+}
+
+function fallbackMessage(status: number) {
+  if (status >= 502) return '서버에 연결할 수 없어요.';
+  if (status === 413) return '이미지 크기가 너무 커요.';
+  return '요청을 처리하지 못했어요.';
 }
 
 function toQueryString(query: ArticleQuery) {
@@ -80,6 +89,12 @@ export const api = {
   deleteCategory: (id: number) => request<void>(`/categories/${id}`, 'DELETE'),
   previewCategoryDeletion: (id: number) =>
     request<{ deletableArticleCount: number }>(`/categories/${id}/deletion-preview`),
+
+  uploadImage: (file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return request<{ url: string }>('/images', 'POST', form);
+  },
 
   login: (loginId: string, password: string) =>
     request<{ loginId: string }>('/auth/login', 'POST', { loginId, password }),

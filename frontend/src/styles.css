@@ -207,3 +207,18 @@ input[type='text'], input[type='search'], input[type='password'], select, textar
 .contact-list { gap: 12px 40px; }
 .contact-list li { display: grid; gap: 2px; }
 .contact-label { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.field-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.button-small { min-height: 32px; padding: 4px 12px; font-size: 13px; }
+.image-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.thumbnail-preview { width: min(320px, 100%); aspect-ratio: 16 / 9; object-fit: cover; border: 1px solid var(--border); border-radius: 8px; }
+.project-thumbnail { width: calc(100% + 48px); max-width: none; margin: -24px -24px 8px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px 12px 0 0; background: var(--purple-tint); }
+.project-card { overflow: hidden; }
+.post-list a { display: flex; align-items: center; gap: 24px; }
+.post-body { flex: 1; min-width: 0; }
+.post-thumbnail { width: 128px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.prose img { border-radius: 8px; }
+
+@media (max-width: 640px) {
+  .post-thumbnail { width: 88px; }
+}

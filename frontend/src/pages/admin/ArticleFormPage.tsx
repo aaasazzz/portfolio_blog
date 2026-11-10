@@ -1,9 +1,18 @@
-import { useEffect, useState, type FormEvent, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ClipboardEvent,
+  type FormEvent,
+  type KeyboardEvent,
+} from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Markdown from '../../components/Markdown';
 import { ErrorMessage, Loading } from '../../components/Status';
 import { api } from '../../lib/api';
 import { errorMessage } from '../../lib/format';
+import { IMAGE_ACCEPT, imageAlt, uploadImage } from '../../lib/images';
 import { SKELETONS } from '../../lib/skeletons';
 import { useAsync } from '../../lib/useAsync';
 import type { ArticleInput, ArticleType } from '../../types';
@@ -11,6 +20,7 @@ import type { ArticleInput, ArticleType } from '../../types';
 const EMPTY_FORM: ArticleInput = {
   title: '',
   summary: '',
+  thumbnailUrl: null,
   content: SKELETONS.GENERAL,
   articleType: 'GENERAL',
   isPrivate: false,
@@ -30,6 +40,13 @@ export default function ArticleFormPage() {
   const [newCategory, setNewCategory] = useState('');
   const [categoryError, setCategoryError] = useState('');
   const [addingCategory, setAddingCategory] = useState(false);
+  const [bodyUploading, setBodyUploading] = useState(false);
+  const [thumbnailUploading, setThumbnailUploading] = useState(false);
+  const [bodyImageError, setBodyImageError] = useState('');
+  const [thumbnailError, setThumbnailError] = useState('');
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const bodyFileRef = useRef<HTMLInputElement>(null);
+  const thumbnailFileRef = useRef<HTMLInputElement>(null);
 
   const categories = useAsync(() => api.listCategories(), []);
 
@@ -43,6 +60,7 @@ export default function ArticleFormPage() {
         setForm({
           title: article.title,
           summary: article.summary,
+          thumbnailUrl: article.thumbnailUrl,
           content: article.content,
           articleType: article.articleType,
           isPrivate: article.isPrivate,
@@ -99,6 +117,61 @@ export default function ArticleFormPage() {
     if (event.key !== 'Enter') return;
     event.preventDefault();
     if (!event.nativeEvent.isComposing) addCategory();
+  }
+
+  async function insertBodyImages(files: File[]) {
+    if (files.length === 0 || bodyUploading) return;
+    const textarea = contentRef.current;
+    const start = textarea?.selectionStart ?? form.content.length;
+    const end = textarea?.selectionEnd ?? start;
+    setBodyImageError('');
+    setBodyUploading(true);
+    try {
+      const lines: string[] = [];
+      for (const file of files) {
+        lines.push(`![${imageAlt(file.name)}](${await uploadImage(file)})`);
+      }
+      setForm((current) => {
+        const before = current.content.slice(0, start);
+        const after = current.content.slice(end);
+        const prefix = before && !before.endsWith('\n') ? '\n' : '';
+        const suffix = after.startsWith('\n') ? '' : '\n';
+        return { ...current, content: before + prefix + lines.join('\n') + suffix + after };
+      });
+    } catch (caught) {
+      setBodyImageError(errorMessage(caught));
+    } finally {
+      setBodyUploading(false);
+    }
+  }
+
+  function handleBodyFiles(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    insertBodyImages(files);
+  }
+
+  function handlePaste(event: ClipboardEvent<HTMLTextAreaElement>) {
+    const files = Array.from(event.clipboardData.files).filter((file) => file.type.startsWith('image/'));
+    if (files.length === 0) return;
+    event.preventDefault();
+    insertBodyImages(files);
+  }
+
+  async function handleThumbnailFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setThumbnailError('');
+    setThumbnailUploading(true);
+    try {
+      const url = await uploadImage(file);
+      setForm((current) => ({ ...current, thumbnailUrl: url }));
+    } catch (caught) {
+      setThumbnailError(errorMessage(caught));
+    } finally {
+      setThumbnailUploading(false);
+    }
   }
 
   async function submit(event: FormEvent) {
@@ -160,6 +233,34 @@ export default function ArticleFormPage() {
           />
         </label>
 
+        <div className="field">
+          <span>썸네일 (선택)</span>
+          {form.thumbnailUrl && (
+            <img className="thumbnail-preview" src={form.thumbnailUrl} alt="썸네일 미리보기" />
+          )}
+          <div className="image-actions">
+            <button
+              className="button"
+              type="button"
+              disabled={thumbnailUploading}
+              onClick={() => thumbnailFileRef.current?.click()}
+            >
+              {thumbnailUploading ? '올리는 중' : form.thumbnailUrl ? '다른 이미지로 변경' : '이미지 선택'}
+            </button>
+            {form.thumbnailUrl && (
+              <button
+                className="button button-danger"
+                type="button"
+                onClick={() => setForm({ ...form, thumbnailUrl: null })}
+              >
+                썸네일 제거
+              </button>
+            )}
+          </div>
+          <input ref={thumbnailFileRef} type="file" accept={IMAGE_ACCEPT} hidden onChange={handleThumbnailFile} />
+          {thumbnailError && <ErrorMessage message={thumbnailError} />}
+        </div>
+
         <div className="form-row">
           <label className="field">
             <span>종류</span>
@@ -216,14 +317,30 @@ export default function ArticleFormPage() {
         </fieldset>
 
         <div className="editor">
-          <label className="field">
-            <span>본문 (마크다운)</span>
+          <div className="field">
+            <div className="field-heading">
+              <label htmlFor="article-content">본문 (마크다운)</label>
+              <button
+                className="button button-small"
+                type="button"
+                disabled={bodyUploading}
+                onClick={() => bodyFileRef.current?.click()}
+              >
+                {bodyUploading ? '올리는 중' : '이미지 넣기'}
+              </button>
+            </div>
             <textarea
+              id="article-content"
+              ref={contentRef}
               required
               value={form.content}
               onChange={(event) => setForm({ ...form, content: event.target.value })}
+              onPaste={handlePaste}
             />
-          </label>
+            <input ref={bodyFileRef} type="file" accept={IMAGE_ACCEPT} multiple hidden onChange={handleBodyFiles} />
+            <span className="hint">이미지를 복사해서 본문에 붙여넣어도 올라가요.</span>
+            {bodyImageError && <ErrorMessage message={bodyImageError} />}
+          </div>
           <div className="field">
             <span>미리보기</span>
             <div className="preview">

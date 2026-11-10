@@ -76,6 +76,9 @@ function Projects() {
     <div className="project-grid">
       {data.articles.map((project) => (
         <Link className="project-card" key={project.id} to={`/articles/${project.id}`}>
+          {project.thumbnailUrl && (
+            <img className="project-thumbnail" src={project.thumbnailUrl} alt="" loading="lazy" />
+          )}
           <h3>{project.title}</h3>
           <p>{project.summary}</p>
           <span className="project-categories">

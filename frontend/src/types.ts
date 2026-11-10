@@ -9,6 +9,7 @@ export interface ArticleSummary {
   id: number;
   title: string;
   summary: string;
+  thumbnailUrl: string | null;
   articleType: ArticleType;
   isPrivate: boolean;
   categories: Category[];
@@ -31,6 +32,7 @@ export interface ArticlePage {
 export interface ArticleInput {
   title: string;
   summary: string;
+  thumbnailUrl: string | null;
   content: string;
   articleType: ArticleType;
   isPrivate: boolean;

@@ -19,6 +19,7 @@ public class ArticleResponse {
     private String title;
     private String content;
     private String summary;
+    private String thumbnailUrl;
     private ArticleType articleType;
     private Boolean isPrivate;
     private List<CategoryResponse> categories;
@@ -31,8 +32,8 @@ public class ArticleResponse {
             cr.add(CategoryResponse.from(category));
         }
         return new ArticleResponse(article.getId(), article.getTitle(), article.getContent(),
-                article.getSummary(), article.getArticleType(), article.isPrivate(), cr, article.getCreateTime(),
-                article.getModifyTime());
+                article.getSummary(), article.getThumbnailUrl(), article.getArticleType(),
+                article.isPrivate(), cr, article.getCreateTime(), article.getModifyTime());
 
     }
 }

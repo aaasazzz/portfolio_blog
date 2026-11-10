@@ -22,6 +22,10 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 
 비공개글은 같은 URL에 로그인 여부로 분류
 
+### image
+- POST /api/images -> 이미지 업로드
+- GET /api/images/{fileName} -> 이미지 조회
+
 ---
 ## 요청, 성공 응답
 
@@ -85,6 +89,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
                 "id": 12,
                 "title": "포트폴리오 블로그 백엔드 구축",
                 "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
+                "thumbnailUrl": "/api/images/550e8400-e29b-41d4-a716-446655440000.png",
                 "articleType": "PROJECT",
                 "isPrivate": false,
                 "categories": [
@@ -98,6 +103,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
                 "id": 11,
                 "title": "JPA 더티 체킹 정리",
                 "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
+                "thumbnailUrl": "/api/images/550e8400-e29b-41d4-a716-446655440000.png",
                 "articleType": "GENERAL",
                 "isPrivate": false,
                 "categories": [
@@ -125,6 +131,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
         "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
+        "thumbnailUrl": "/api/images/550e8400-e29b-41d4-a716-446655440000.png",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
@@ -144,6 +151,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
         "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
+        "thumbnailUrl": "/api/images/550e8400-e29b-41d4-a716-446655440000.png",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categoryIds": [1, 3]
@@ -156,6 +164,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
         "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
+        "thumbnailUrl": "/api/images/550e8400-e29b-41d4-a716-446655440000.png",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
@@ -175,6 +184,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
         "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
+        "thumbnailUrl": "/api/images/550e8400-e29b-41d4-a716-446655440000.png",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categoryIds": [1, 3]
@@ -187,6 +197,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
         "title": "포트폴리오 블로그 백엔드 구축",
         "content": "## 프로젝트 소개\nSpring Boot로 만든 블로그입니다.",
         "summary": "Spring Boot로 만든 블로그 백엔드입니다.",
+        "thumbnailUrl": "/api/images/550e8400-e29b-41d4-a716-446655440000.png",
         "articleType": "PROJECT",
         "isPrivate": false,
         "categories": [
@@ -230,6 +241,22 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 프론트 → 서버: POST /api/auth/logout
 
 서버 → 프론트: 204 No Content
+
+### image
+- POST /api/images
+
+프론트 → 서버: POST /api/images (multipart/form-data, 필드 이름 file)
+
+서버 → 프론트: 201 Created
+```json
+    {"url": "/api/images/550e8400-e29b-41d4-a716-446655440000.png"}
+```
+
+- GET /api/images/{fileName}
+
+프론트 → 서버: GET /api/images/550e8400-e29b-41d4-a716-446655440000.png
+
+서버 → 프론트: 200 OK (이미지 파일)
 
 ---
 
@@ -378,6 +405,29 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
     {"status": 401, "code": "UNAUTHORIZED", "message": "로그인이 필요합니다."}
     ```
 
+### image
+- POST /api/images
+
+    400 Bad Request (이미지 파일이 아니거나 허용하지 않는 형식)
+    ```json
+    {"status": 400, "code": "INVALID_IMAGE", "message": "이미지 파일이 올바르지 않습니다."}
+    ```
+    401 Unauthorized
+    ```json
+    {"status": 401, "code": "UNAUTHORIZED", "message": "로그인이 필요합니다."}
+    ```
+    413 Payload Too Large
+    ```json
+    {"status": 413, "code": "IMAGE_TOO_LARGE", "message": "이미지 크기가 너무 큽니다."}
+    ```
+
+- GET /api/images/{fileName}
+
+    404 Not Found
+    ```json
+    {"status": 404, "code": "IMAGE_NOT_FOUND", "message": "이미지를 찾을 수 없습니다."}
+    ```
+
 ---
 
 ## 글 규칙
@@ -392,13 +442,15 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 - categoryIds는 1개 이상
 - 비공개글 조회는 로그인한 관리자만
 - summary는 1자 이상 200자 이하
+- thumbnailUrl은 선택 사항, 업로드한 이미지 주소만 사용 가능
+- 썸네일이 없으면 thumbnailUrl은 null
 
 ## 로그인 규칙
 
 | 구분 | API |
 |---|---|
-| 로그인 불필요 | GET /api/articles, GET /api/articles/{articleId}, GET /api/categories, GET /api/auth/me, POST /api/auth/login |
-| 로그인 필요 | 글 POST/PUT/DELETE, 카테고리 POST/PUT/DELETE, GET /api/categories/{categoryId}/deletion-preview, POST /api/auth/logout |
+| 로그인 불필요 | GET /api/articles, GET /api/articles/{articleId}, GET /api/categories, GET /api/auth/me, POST /api/auth/login, GET /api/images/{fileName} |
+| 로그인 필요 | 글 POST/PUT/DELETE, 카테고리 POST/PUT/DELETE, GET /api/categories/{categoryId}/deletion-preview, POST /api/auth/logout, POST /api/images |
 
 - 로그인 방식은 세션 + 쿠키(JSESSIONID)
 - 비밀번호는 BCrypt 해시로 저장
@@ -411,6 +463,12 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 
 - 카테고리를 삭제하면 다른 카테고리가 없는 글도 함께 삭제
 - 다른 카테고리가 있는 글은 유지하고 해당 카테고리 연결만 삭제
+
+## 이미지 규칙
+
+- PNG, JPEG, GIF, WebP만 업로드 가능, 파일 크기 <= 5MB
+- 파일 내용으로 형식을 검사, 저장 이름은 서버가 새로 생성
+- 글 본문과 썸네일 어디에도 쓰이지 않고 업로드 후 24시간이 지난 이미지는 매일 자동 삭제
 
 ---
 
