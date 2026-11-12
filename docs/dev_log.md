@@ -3,9 +3,9 @@
 Spring Boot로 만든 포트폴리오 겸 블로그의 개발 과정을 단계별로 정리한 문서
 각 단계별로 무엇을 만들었는지, 어떤 개념을 배웠는지, 어떤 문제를 겪고 어떻게 해결했는지를 기록
 
-- 기간: 2026-11-02 ~ 2026-11-10
+- 기간: 2026-11-02 ~ 2026-11-00
 - 목표: 백엔드 구축 연습, GitHub Flow(branch → PR → CI → merge) 연습
-- 기술: Java 25, Spring Boot 4, Spring Data JPA, MySQL 8.4, Docker Compose, GitHub Actions, React + Vite + TypeScript
+- 기술: Java 25, Spring Boot 4, Spring Data JPA, MySQL 8.4, Docker Compose, Caddy, GitHub Actions, React + Vite + TypeScript
 
 ## 목차
 
@@ -20,8 +20,9 @@ Spring Boot로 만든 포트폴리오 겸 블로그의 개발 과정을 단계�
 9. [CI](#9-ci)
 10. [프론트 연동](#10-프론트-연동)
 11. [이미지 업로드](#11-이미지-업로드)
-12. [남은 작업](#12-남은-작업)
-13. [AI 활용](#13-ai-활용)
+12. [전체 Docker 실행](#12-전체-docker-실행)
+13. [남은 작업](#13-남은-작업)
+14. [AI 활용](#14-ai-활용)
 
 ---
 
@@ -289,7 +290,33 @@ Spring Boot로 만든 포트폴리오 겸 블로그의 개발 과정을 단계�
 
 ---
 
-## 12. 남은 작업
+## 12. 전체 Docker 실행
+
+| PR | 내용 |
+|---|---|
+| #19 `feat/web-container` | 프론트를 Caddy 컨테이너로 만들어 `docker compose` 한 번으로 전체 실행 |
+
+### 한 일
+- `frontend/Dockerfile`: Node로 화면을 빌드하고, 결과 파일만 Caddy 이미지에 복사(멀티 스테이지)
+- `frontend/Caddyfile`: 화면 파일 제공, `/api` 요청은 `app` 컨테이너로 전달, 없는 경로는 `index.html`로 응답
+- `compose.yaml`에 `web` 서비스 추가, `http://localhost`로 접속
+- 개발할 때는 기존처럼 Vite(`5173`)를 쓰고, 전체 확인과 배포는 Docker로 실행
+
+### 배운 것
+- Dockerfile은 이미지 하나를 만드는 레시피, compose는 여러 컨테이너를 어떤 순서와 설정으로 함께 실행할지 적은 파일.
+- `build:`에 적은 폴더가 빌드 컨텍스트이고, Docker는 그 폴더의 `Dockerfile`과 `.dockerignore`를 사용. `COPY` 경로도 그 폴더 기준.
+- 이미지는 고정된 결과물이라 코드를 고치면 `--build`로 다시 만들어야 반영됨.
+- `package.json`을 먼저 복사하고 `npm ci`를 따로 실행하면, 화면 코드만 바뀌었을 때 설치 단계를 캐시로 건너뜀.
+- Caddy는 웹 서버. 개발 중 Vite 프록시가 하던 `/api` 전달을 배포 환경에서 대신하고, 도메인을 적으면 HTTPS 인증서도 자동 발급.
+
+### 문제와 해결
+| 문제 | 원인 | 해결 |
+|---|---|---|
+| `localhost:5173` 접속 안 됨 | 5173은 Vite 개발 서버 포트라 `npm run dev`를 켰을 때만 열림 | Docker 실행 시에는 `http://localhost`로 접속 |
+
+---
+
+## 13. 남은 작업
 
 | 작업 | 내용 |
 |---|---|
@@ -299,7 +326,7 @@ Spring Boot로 만든 포트폴리오 겸 블로그의 개발 과정을 단계�
 
 ---
 
-## 13. AI 활용
+## 14. AI 활용
 
 ### 표시 기준
 
@@ -325,6 +352,7 @@ Spring Boot로 만든 포트폴리오 겸 블로그의 개발 과정을 단계�
 | 8. MySQL과 Docker | `compose.yaml`, `Dockerfile`, 설정 파일은 AI 코드 제공 |
 | 9. CI | 백엔드 `ci.yml`은 AI 코드 제공 / 프론트 작업은 직접 |
 | 10. 프론트 연동 | `summary` 필드는 직접 / `/api/auth/me`는 AI 코드 제공 / React 화면 전체는 AI 생성 |
-| 11. 이미지 업로드 | 썸네일 필드와 볼륨 연결은 직접 / 업로드, 정리 작업, 검증 코드는 AI 코드 제공 / 프론트 화면은 AI 생성 |  
+| 11. 이미지 업로드 | 썸네일 필드와 볼륨 연결은 직접 / 업로드, 정리 작업, 검증 코드는 AI 코드 제공 / 프론트 화면은 AI 생성 |
+| 12. 전체 Docker 실행 | `Dockerfile`, `Caddyfile`, compose 추가 내용은 AI 코드 제공 |
 
 배경지식이 없던 분야(로그인과 세션, 이미지 업로드, Docker와 CI 설정 파일)와 단순 작업(검색 쿼리)은 AI가 제시한 코드를 이해한 뒤 사용했고, 그 외에는 직접 작성했다.

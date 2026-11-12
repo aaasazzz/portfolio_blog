@@ -30,6 +30,13 @@ services:
     volumes:
       - upload:/app/uploads
 
+  web:
+    build: ./frontend
+    depends_on:
+      - app
+    ports:
+      - "127.0.0.1:80:80"
+
 volumes:
   mysql-data:
   upload:
