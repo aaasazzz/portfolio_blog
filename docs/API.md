@@ -220,7 +220,7 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 
 프론트 → 서버: POST /api/auth/login
 ```json
-    {"loginId": "admin", "password": "admin1234"}
+    {"loginId": "관리자 아이디", "password": "비밀번호"}
 ```
 서버 → 프론트: 200 OK (세션 쿠키는 Set-Cookie 헤더로 전달)
 ```json
@@ -453,6 +453,8 @@ ex) GET /api/articles?categoryIds=1,2&articleType=PROJECT&q=tmp&page=n&size=m ->
 | 로그인 필요 | 글 POST/PUT/DELETE, 카테고리 POST/PUT/DELETE, GET /api/categories/{categoryId}/deletion-preview, POST /api/auth/logout, POST /api/images |
 
 - 로그인 방식은 세션 + 쿠키(JSESSIONID)
+- 세션 쿠키는 `HttpOnly`, `SameSite=Lax`, 배포 환경(HTTPS)에서는 `Secure`
+- 관리자 계정은 서버 첫 실행 시 환경변수(`ADMIN_LOGIN_ID`, `ADMIN_PASSWORD`) 값으로 생성
 - 비밀번호는 BCrypt 해시로 저장
 - 아이디가 없는 경우와 비밀번호가 틀린 경우의 응답은 동일하게 처리 (아이디 또는 비밀번호가 올바르지 않습니다.)
 - 로그인 성공 시 세션 ID를 새로 발급
