@@ -25,6 +25,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/portfolio_blog
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      ADMIN_LOGIN_ID: ${ADMIN_LOGIN_ID:?ADMIN_LOGIN_ID를 .env에 설정하세요}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD를 .env에 설정하세요}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
