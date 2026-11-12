@@ -15,6 +15,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    restart: unless-stopped
 
   app:
     build: .
@@ -32,6 +33,7 @@ services:
       - "127.0.0.1:8080:8080"
     volumes:
       - upload:/app/uploads
+    restart: unless-stopped
 
   web:
     build: ./frontend
@@ -44,6 +46,7 @@ services:
       - "${WEB_BIND:-127.0.0.1}:443:443"
     volumes:
       - caddy-data:/data
+    restart: unless-stopped
 
 volumes:
   mysql-data:
