@@ -37,9 +37,15 @@ services:
     build: ./frontend
     depends_on:
       - app
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
     ports:
-      - "127.0.0.1:80:80"
+      - "${WEB_BIND:-127.0.0.1}:80:80"
+      - "${WEB_BIND:-127.0.0.1}:443:443"
+    volumes:
+      - caddy-data:/data
 
 volumes:
   mysql-data:
   upload:
+  caddy-data:
