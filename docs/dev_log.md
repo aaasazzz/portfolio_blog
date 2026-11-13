@@ -3,7 +3,7 @@
 Spring Boot로 만든 포트폴리오 겸 블로그의 개발 과정을 단계별로 정리한 문서
 각 단계별로 무엇을 만들었는지, 어떤 개념을 배웠는지, 어떤 문제를 겪고 어떻게 해결했는지를 기록
 
-- 기간: 2026-11-02 ~ 2026-11-00
+- 기간: 2026-11-02 ~ 2026-11-12
 - 목표: 백엔드 구축 연습, GitHub Flow(branch → PR → CI → merge) 연습
 - 기술: Java 25, Spring Boot 4, Spring Data JPA, MySQL 8.4, Docker Compose, Caddy, GitHub Actions, React + Vite + TypeScript
 
